@@ -147,13 +147,14 @@
                     data.append('width', width);
                     data.append('height', height);
 
-                    fetch('process_image.php', {
+                    fetch('upload_process.php', {
                         method: 'POST',
                         body: data
                     })
                     .then(response => response.text())
                     .then(text => {
                         document.getElementById('result').innerHTML = text;
+                        window.location.href = 'result.php'; // 결과 페이지로 리디렉션
                     })
                     .catch(error => {
                         console.error('Error:', error);

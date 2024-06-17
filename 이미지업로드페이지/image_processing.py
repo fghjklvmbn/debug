@@ -4,11 +4,6 @@ import os
 import easyocr
 
 def process_image(image_path, output_path, overlay_path, x, y, width, height):
-    print(f"Input image path: {image_path}")
-    print(f"Output image path: {output_path}")
-    print(f"Overlay image path: {overlay_path}")
-    print(f"Selected region: x={x}, y={y}, width={width}, height={height}")
-
     if not os.path.isfile(image_path):
         print(f"Error: {image_path} does not exist or is not a file.")
         return
@@ -18,8 +13,6 @@ def process_image(image_path, output_path, overlay_path, x, y, width, height):
     if image is None:
         print(f"Error: Unable to read image from {image_path}")
         return
-
-    print(f"Image read successfully from {image_path}")
 
     # Adjust selected region coordinates if necessary
     if x < 0: x = 0
@@ -35,25 +28,14 @@ def process_image(image_path, output_path, overlay_path, x, y, width, height):
     cv2.rectangle(overlay_image, (x, y), (x+width, y+height), (0, 255, 0), 2)  # Green rectangle with thickness 2
 
     # 이미지 쓰기
-    success = cv2.imwrite(output_path, selected_region)
-    overlay_success = cv2.imwrite(overlay_path, overlay_image)
-    
-    if not success:
-        print(f"Error: Unable to write image to {output_path}")
-    else:
-        print(f"Success: Image written to {output_path}")
-
-    if not overlay_success:
-        print(f"Error: Unable to write overlay image to {overlay_path}")
-    else:
-        print(f"Success: Overlay image written to {overlay_path}")
+    cv2.imwrite(output_path, selected_region)
+    cv2.imwrite(overlay_path, overlay_image)
 
     # EasyOCR로 텍스트 추출
     reader = easyocr.Reader(['ko', 'en'])
     result = reader.readtext(output_path)
 
     extracted_text = "\n".join([res[1] for res in result])
-    print(extracted_text)
 
     # 추출된 텍스트를 파일에 저장
     with open("extracted_text.txt", "w", encoding="utf-8") as f:
